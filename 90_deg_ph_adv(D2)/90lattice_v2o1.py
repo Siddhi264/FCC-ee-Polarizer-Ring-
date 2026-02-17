@@ -122,7 +122,7 @@ env['kqf_sup'] = 0.955138
 env['kqd_sup_b'] = -0.9435615
 env['KQF_str_doublet'] = 3.0
 env['KQD_str_doublet'] = -3.2
-env['kqf_arc_b'] = 0.95
+env['kqf_sup_b'] = 0.95
 env['KQF_str_triplet'] = 1.45
 env['KQD_str_triplet'] = -0.844
 
@@ -155,8 +155,8 @@ env.new('QD_str_triplet', 'mq', k1='KQD_str_triplet', length=env['l_quad'])
 env.new('half_QD_str_triplet', xt.Quadrupole, length=env['l_quad'] / 2, k1='KQD_str_triplet')
 
 
-env.new('qf_arc_b', 'mq', k1='kqf_arc_b', length=env['l_quad'])
-env.new('half_qf_arc_b', xt.Quadrupole, length=env['l_quad'] / 2, k1='kqf_arc_b')
+env.new('qf_sup_b', 'mq', k1='kqf_sup_b', length=env['l_quad'])
+env.new('half_qf_sup_b', xt.Quadrupole, length=env['l_quad'] / 2, k1='kqf_sup_b')
 
 env.new('QF_str_doublet', 'mq', k1='KQF_str_doublet', length=env['l_quad'])
 env.new('half_QF_str_doublet', xt.Quadrupole, length=env['l_quad'] / 2, k1='KQF_str_doublet')
@@ -425,7 +425,7 @@ arc_cell_1 = env.new_line(components=[
 ])
 
 arc_cell_SF = env.new_line(components=[
-    env.place('half_qf_arc_b') ,
+    env.place('half_qf_sup_b') ,
     env.place('dr_arc_after_adding_sext_half') , env.place('sf'), env.place('dr_arc_after_adding_sext_half') ,
     env.place('mb'),
     env.place('dr_arc'),
@@ -434,11 +434,11 @@ arc_cell_SF = env.new_line(components=[
 ])
 
 arc_cell_SF_to_left_of_last_quad = env.new_line(components=[
-    env.place('half_qf_arc_b') , env.place('dr_arc'),
+    env.place('half_qf_arc') , env.place('dr_arc'),
     env.place('mb'),
     env.place('dr_arc'),
     env.place('qd_arc'), env.place('dr_arc') , env.place('mb') ,
-    env.place('dr_arc_after_adding_sext_half') , env.place('sf'), env.place('dr_arc_after_adding_sext_half') , env.place('half_qf_arc')
+    env.place('dr_arc_after_adding_sext_half') , env.place('sf'), env.place('dr_arc_after_adding_sext_half') , env.place('half_qf_sup_b')
 ])
 
 
@@ -446,14 +446,14 @@ arc_cell_SD = env.new_line(components=[
     env.place('half_qf_arc') ,
     env.place('dr_arc') , env.place('mb'),
     env.place('dr_arc') ,env.place('qd_arc'), env.place('dr_arc_after_adding_sext_half'), env.place('sd'), env.place('dr_arc_after_adding_sext_half') , env.place('mb'),
-    env.place('dr_arc'), env.place('half_qf_arc_b')
+    env.place('dr_arc'), env.place('half_qf_arc')
 ])
 
 arc_cell_SD_to_left = env.new_line(components=[
     env.place('half_qf_arc') ,
     env.place('dr_arc') , env.place('mb'), env.place('dr_arc_after_adding_sext_half'), env.place('sd'), env.place('dr_arc_after_adding_sext_half') ,
     env.place('qd_arc'), env.place('dr_arc'), env.place('mb'),
-    env.place('dr_arc'), env.place('half_qf_arc_b')
+    env.place('dr_arc'), env.place('half_qf_arc')
 ])
 
 
@@ -463,13 +463,13 @@ suppressor_cell_1 = env.new_line(components=[
     env.place('half_qf_sup') ,
     env.place('dr_sup2') , env.place('mb') , env.place('dr_sup2') ,
     env.place('qd_sup_b') , env.place('dr_sup2') , env.place('mb') , env.place('dr_sup2') ,
-    env.place('half_qf_arc_b')
+    env.place('half_qf_sup_b')
 ])
 
 #suppressor cell 1 inverted (0 dipoles, 2 drifts)
 # half QF_arc - drift - QD_sup_b - drift - half QF_sup
 suppressor_cell_1_inv = env.new_line(components=[
-    env.place('half_qf_arc_b') ,
+    env.place('half_qf_sup_b') ,
     env.place('dr_sup2') , env.place('mb') , env.place('dr_sup2') ,
     env.place('qd_sup_b') , env.place('dr_sup2') , env.place('mb') , env.place('dr_sup2') ,
     env.place('half_qf_sup')
@@ -600,7 +600,7 @@ arc_twiss_init = arc_twiss.get_twiss_init(at_element=0)
 env['KQF_str_doublet'] = 1.4
 env['KQD_str_doublet'] = -1.0
 
-env['kqf_arc_b'] = 1.3
+env['kqf_sup_b'] = 1.3
 
 tw_transfer = transfer_line_one_sixth_ring.twiss(
     betx=arc_twiss_init.betx,
@@ -664,7 +664,7 @@ opt_disp_TL = transfer_line_one_sixth_ring.match(
         xt.Vary('kqd_sup_b', step=1e-4),
         xt.Vary('KQF_str_doublet', step=1e-4),
         xt.Vary('KQD_str_doublet', step=1e-4),
-        xt.Vary('kqf_arc_b', step=1e-4),
+        xt.Vary('kqf_sup_b', step=1e-4),
         xt.Vary('kqf_sup',  step=1e-4),     
         xt.Vary('KQF_str_triplet', step=1e-4),
         xt.Vary('KQD_str_triplet', step=1e-4),
@@ -672,12 +672,12 @@ opt_disp_TL = transfer_line_one_sixth_ring.match(
     targets=[
         xt.Target(dx=0.0, at='QF_str_doublet.triplet_2_0', tol=1e-6),                      
         xt.Target(dpx=0.0, at='QF_str_doublet.triplet_2_0', tol=1e-6),                     
-        xt.Target(alfx=0.0, at='_end_point', tol=1e-6),
-        xt.Target(alfy=0.0, at='_end_point', tol=1e-6),
-        xt.Target(bety=3.0, at='wig1_short_10.straight_wig1.triplet_2_0', tol=1e-6),  
-        xt.Target(betx=3.0, at='wig1_short_10.straight_wig1.triplet_2_0', tol=1e-6),
-        xt.Target(bety=3.0, at='marker_str_triplet_40pct.triplet_2_0::1', tol=1e-6),
-        xt.Target(betx=3.0, at='marker_str_triplet_40pct.triplet_2_0::1', tol=1e-6),
+        xt.Target(alfx=0.0, at='_end_point', tol=1e-5),
+        xt.Target(alfy=0.0, at='_end_point', tol=1e-5),
+        xt.Target(bety=3.5, at='wig1_short_12.straight_wig1.triplet_2_0', tol=1e-5),  
+        xt.Target(betx=3.5, at='wig1_short_7.straight_wig1.triplet_2_0', tol=1e-5),
+        xt.Target(bety=3.5, at='marker_str_triplet_70pct.triplet_2_0::1', tol=1e-5),
+        xt.Target(betx=3.5, at='marker_str_triplet_120pct.triplet_2_0::1', tol=1e-5),
     ]
 )
 
